@@ -88,7 +88,7 @@ export default function LeftNav() {
               <ListItemIcon>
                 <TableChartIcon />
               </ListItemIcon>
-              <ListItemText primary="Garden Table" />
+              <ListItemText primary="Growing History" />
             </ListItem>
           </Link>
           </div>

@@ -46,7 +46,7 @@ render(){
 
   return (
     <React.Fragment>
-      <Title>Farm History</Title>
+      <Title>Growing History</Title>
       <Table size="small">
         <TableHead>
           <TableRow>
