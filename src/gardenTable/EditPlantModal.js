@@ -1,49 +1,37 @@
 import React from 'react';
+
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import IconButton from '@material-ui/core/IconButton';
 import CreateIcon from '@material-ui/icons/Create';
-
-
-const rand =() => {
-  return Math.round(Math.random() * 20) - 10;
-}
-
-const getModalStyle =() => {
-  const top = 50 + rand();
-  const left = 50 + rand();
-
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
-  };
-}
-
-const handleEdit = row => {
-  //mutation
-  console.log(row)
-
-  //pop modal
-}
+import Backdrop from '@material-ui/core/Backdrop';
+import Fade from '@material-ui/core/Fade';
+import TextField from "@material-ui/core/TextField";
 
 const useStyles = makeStyles(theme => ({
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   paper: {
-    position: 'absolute',
-    width: 400,
     backgroundColor: theme.palette.background.paper,
     border: '2px solid #000',
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
+  form:{
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  formField:{
+    margin: theme.spacing(1)
+  }
 }));
 
-const SimpleModal =( plant ) => {
+const EditPlantModal =({plant}) => {
   const classes = useStyles();
-  // getModalStyle is not a pure function, we roll the style only on the first render
-  const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
-
   const handleOpen = () => {
     setOpen(true);
   };
@@ -52,27 +40,102 @@ const SimpleModal =( plant ) => {
     setOpen(false);
   };
 
+//textfield is expecting a pre-formatted date string like MM/DD/YYYY, currently a timestamp
+//  "2020-02-16T00:00:00.000Z" does not conform to the required format, "yyyy-MM-dd".
   return (
     <div>
-      <IconButton >
+      <IconButton onClick={handleOpen}>
         <CreateIcon />
       </IconButton>
       <Modal
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-        open={open}
-        onClose={handleClose}
+          aria-labelledby="editPlantModal-title"
+          className={classes.modal}
+          open={open}
+          onClose={handleClose}
+          closeAfterTransition
+          BackdropComponent={Backdrop}
+          BackdropProps={{
+            timeout: 500,
+          }}
       >
-        <div style={modalStyle} className={classes.paper}>
-          <h2 id="simple-modal-title">Text in a modal</h2>
-          <p id="simple-modal-description">
-            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-          </p>
-          <SimpleModal />
-        </div>
+        <Fade in={open}>
+          <div className={classes.paper}>
+            <h2 data-testid="editPlantModal-title">Update your plant history</h2>
+            <form className={classes.form} noValidate autoComplete="off">
+              <TextField
+                  className={classes.formField}
+                  data-testid="editPlantModal-textField-variety"
+                  label="Variety"
+                  variant="outlined"
+                  color="secondary"
+                  defaultValue={plant.variety}
+                  helperText={"Error"}
+              />
+              <TextField
+                  className={classes.formField}
+                  data-testid="editPlantModal-textField-seeded"
+                  label="Seeded Date"
+                  variant="outlined"
+                  color="secondary"
+                  type="date"
+                  defaultValue={plant.seededDate}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+              />
+              <TextField
+                  className={classes.formField}
+                  data-testid="editPlantModal-textField-transplant"
+                  label="Transplant Date"
+                  variant="outlined"
+                  color="secondary"
+                  type="date"
+                  defaultValue={plant.plantedDate}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+              />
+              <TextField
+                  className={classes.formField}
+                  data-testid="editPlantModal-textField-location"
+                  label="Planting Location"
+                  variant="outlined"
+                  color="secondary"
+                  defaultValue={plant.plantingLocation}
+                  disabled={true}
+              />
+              <TextField
+                  className={classes.formField}
+                  data-testid="editPlantModal-textField-vendor"
+                  label="Vendor"
+                  variant="outlined"
+                  color="secondary"
+                  defaultValue={plant.seedVendor}
+              />
+              <TextField
+                  className={classes.formField}
+                  data-testid="editPlantModal-textField-germination"
+                  label="Germination Notes"
+                  variant="outlined"
+                  color="secondary"
+                  multiline={true}
+                  defaultValue={plant.germenationNotes}
+              />
+              <TextField
+                  className={classes.formField}
+                  data-testid="editPlantModal-textField-harvest"
+                  label="Harvest Notes"
+                  variant="outlined"
+                  color="secondary"
+                  multiline={true}
+                  defaultValue={plant.harvestNotes}
+              />
+            </form>
+          </div>
+        </Fade>
       </Modal>
     </div>
   );
 }
 
-export default SimpleModal
+export default EditPlantModal

@@ -56,7 +56,7 @@ render(){
             <TableCell>Transplant date</TableCell>
             <TableCell>Plant location</TableCell>
             <TableCell>Seed vendor</TableCell>
-            <TableCell>Germenation notes</TableCell>
+            <TableCell>Germination notes</TableCell>
             <TableCell>Harvest notes</TableCell>
           </TableRow>
         </TableHead>
