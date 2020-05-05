@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const EditPlantModal =({plant}) => {
+const EditPlantModal =({plant, handleSubmit}) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [plantingLocation, setPlantingLocation] = React.useState(plant.plantingLocation);
@@ -76,12 +76,11 @@ const EditPlantModal =({plant}) => {
     return yyyyMMdd
   }
 
-  const updateDate = e => {
-    console.log(e, e.target.value)
-  }
+  //gonna need something like this for the mutate
+  // const getISODate = date => {
+  //   return  new Date(date).toISOString()
+  // }
 
-//textfield is expecting a pre-formatted date string like MM/DD/YYYY, currently a timestamp
-//  "2020-02-16T00:00:00.000Z" does not conform to the required format, "yyyy-MM-dd".
   return (
     <div>
       <IconButton onClick={handleOpen}>
@@ -101,7 +100,7 @@ const EditPlantModal =({plant}) => {
         <Fade in={open}>
           <div className={classes.paper}>
             <h2 data-testid="editPlantModal-title">Update your plant history</h2>
-            <form className={classes.form} noValidate autoComplete="off">
+            <form onSubmit={handleSubmit} className={classes.form} noValidate autoComplete="off">
               <TextField
                   className={classes.formField}
                   data-testid="editPlantModal-textField-variety"
@@ -117,7 +116,7 @@ const EditPlantModal =({plant}) => {
                   variant="outlined"
                   color="secondary"
                   type="date"
-                  defaultValue={getFormattedDate(plant.seededDate)}
+                  defaultValue={getFormattedDate(seededDate)}
                   onChange={e => setSeededDate(e.target.value)}
                   InputLabelProps={{
                     shrink: true,
@@ -130,7 +129,7 @@ const EditPlantModal =({plant}) => {
                   variant="outlined"
                   color="secondary"
                   type="date"
-                  defaultValue={getFormattedDate(plant.plantedDate)}
+                  defaultValue={getFormattedDate(plantedDate)}
                   onChange={e => setPlantedDate(e.target.value)}
                   InputLabelProps={{
                     shrink: true,
@@ -175,7 +174,7 @@ const EditPlantModal =({plant}) => {
                   defaultValue={plant.harvestNotes}
               />
               <div className={classes.buttonGroup}>
-                <Button variant="contained" color="primary" className={classes.saveButton}>Save</Button>
+                <Button type="submit" variant="contained" color="primary" className={classes.saveButton}>Save</Button>
                 <Button onClick={handleClose}>Cancel</Button>
               </div>
             </form>
@@ -185,5 +184,8 @@ const EditPlantModal =({plant}) => {
     </div>
   );
 }
+
+//mutate wrapper for EditPlantModal
+//export default EditPlantModalWithMutate
 
 export default EditPlantModal
