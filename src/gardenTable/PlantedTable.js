@@ -40,7 +40,7 @@ export class PlantedTable extends React.Component {
 
   formatDate = (isoDate) => {
     const date = new Date(isoDate);
-    const day = date.getDate();
+    const day = date.getDate() + 1;
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
 

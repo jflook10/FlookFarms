@@ -1,4 +1,6 @@
 import React from 'react';
+import gql from "graphql-tag";
+import { Mutation } from "react-apollo"
 
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
@@ -13,7 +15,21 @@ import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
 
-import { locations } from '../constants/plantingLocation'
+import { locations, vendors } from '../constants/constants'
+
+const UPDATE_PLANT_MUTATION = gql`
+mutation EditPlant($id:ID!, $input: GardenAppUpdateInput!){
+  updateGardenApp(
+    where: {
+      id: $id
+    }
+    data: $input
+    )
+   {
+    id
+  }
+}
+`
 
 const useStyles = makeStyles(theme => ({
   modal: {
@@ -51,12 +67,17 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const EditPlantModal =({plant, handleSubmit}) => {
+const EditPlantModal =({plant, mutate}) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+  const [modalError, setModalError] = React.useState(false)
   const [plantingLocation, setPlantingLocation] = React.useState(plant.plantingLocation);
   const [seededDate, setSeededDate] = React.useState(plant.seededDate);
   const [plantedDate, setPlantedDate] = React.useState(plant.plantedDate);
+  const [harvestNotes, setHarvestNotes] = React.useState(plant.harvestNotes);
+  const [germenationNotes, setGermenationNotes] = React.useState(plant.germenationNotes);
+  const [variety, setVariety] = React.useState(plant.variety);
+  const [vendor, setVendor] = React.useState(plant.seedVendor);
 
   const handleOpen = () => {
     setOpen(true);
@@ -66,20 +87,35 @@ const EditPlantModal =({plant, handleSubmit}) => {
     setOpen(false);
   };
 
-  const changeSelect = e  => {
-    console.log(e.target.value)
-    setPlantingLocation(e.target.value)
+  const changeVariety = value => {
+    setVariety(value)
+    if(value.length < 1) setModalError(true)
+    if(modalError && value.length > 1) setModalError(false)
   }
-
   const getFormattedDate = date => {
     const yyyyMMdd = date.slice(0,10)
     return yyyyMMdd
   }
 
-  //gonna need something like this for the mutate
-  // const getISODate = date => {
-  //   return  new Date(date).toISOString()
-  // }
+  const handleSubmit = (e) => {
+    const getISODate = date => {
+      return  new Date(date).toISOString()
+    }  //TODO maybe could pull this out as a util with other date funcs?
+    e.preventDefault()
+
+    const input = {
+      plantedDate: getISODate(plantedDate),
+      plantingLocation,
+      harvestNotes,
+      variety,
+      seedVendor: vendor,
+      germenationNotes: germenationNotes,
+      seededDate: getISODate(seededDate)
+    }
+
+    mutate({ variables: {id: plant.id, input: input}})
+    handleClose() //TODO error handling for if/when to close
+  }
 
   return (
     <div>
@@ -100,14 +136,15 @@ const EditPlantModal =({plant, handleSubmit}) => {
         <Fade in={open}>
           <div className={classes.paper}>
             <h2 data-testid="editPlantModal-title">Update your plant history</h2>
-            <form onSubmit={handleSubmit} className={classes.form} noValidate autoComplete="off">
+            <form onSubmit={e => handleSubmit(e)} className={classes.form} noValidate autoComplete="off">
               <TextField
                   className={classes.formField}
                   data-testid="editPlantModal-textField-variety"
                   label="Variety"
                   variant="outlined"
                   color="secondary"
-                  defaultValue={plant.variety}
+                  defaultValue={variety}
+                  onChange={e => changeVariety(e.target.value)}
               />
               <TextField
                   className={classes.formField}
@@ -141,20 +178,24 @@ const EditPlantModal =({plant, handleSubmit}) => {
                     labelId="editPlantModal-label-location"
                     data-testid="editPlantModal-select-location"
                     value={plantingLocation}
-                    onChange={changeSelect}
+                    onChange={e => setPlantingLocation(e.target.value)}
                     label="Planting Location"
                 >
                   {locations.map(loc => <MenuItem value={loc} key={loc}>{loc}</MenuItem>)}
                 </Select>
               </FormControl>
-              <TextField
-                  className={classes.formField}
-                  data-testid="editPlantModal-textField-vendor"
-                  label="Vendor"
-                  variant="outlined"
-                  color="secondary"
-                  defaultValue={plant.seedVendor}
-              />
+              <FormControl variant="outlined" className={classes.formField}>
+                <InputLabel id="editPlantModal-label-location">Seed Vendor</InputLabel>
+                <Select
+                    labelId="editPlantModal-label-vendor"
+                    data-testid="editPlantModal-select-vendor"
+                    value={vendor}
+                    onChange={e => setVendor(e.target.value)}
+                    label="Seed Vendor"
+                >
+                  {vendors.map(vendor => <MenuItem value={vendor} key={vendor}>{vendor}</MenuItem>)}
+                </Select>
+              </FormControl>
               <TextField
                   className={classes.formField}
                   data-testid="editPlantModal-textField-germination"
@@ -162,7 +203,8 @@ const EditPlantModal =({plant, handleSubmit}) => {
                   variant="outlined"
                   color="secondary"
                   multiline={true}
-                  defaultValue={plant.germenationNotes}
+                  defaultValue={germenationNotes}
+                  onChange={e => setGermenationNotes(e.target.value)}
               />
               <TextField
                   className={classes.formField}
@@ -171,10 +213,11 @@ const EditPlantModal =({plant, handleSubmit}) => {
                   variant="outlined"
                   color="secondary"
                   multiline={true}
-                  defaultValue={plant.harvestNotes}
+                  defaultValue={harvestNotes}
+                  onChange={e => setHarvestNotes(e.target.value)}
               />
               <div className={classes.buttonGroup}>
-                <Button type="submit" variant="contained" color="primary" className={classes.saveButton}>Save</Button>
+                <Button disabled={modalError} type="submit" variant="contained" color="primary" className={classes.saveButton}>Save</Button>
                 <Button onClick={handleClose}>Cancel</Button>
               </div>
             </form>
@@ -185,7 +228,17 @@ const EditPlantModal =({plant, handleSubmit}) => {
   );
 }
 
-//mutate wrapper for EditPlantModal
-//export default EditPlantModalWithMutate
+export class EditPlantModalWithMutate extends React.Component {
+  render() {
+    return(
+        <Mutation mutation={UPDATE_PLANT_MUTATION}>
+          {
+            (updateGardenApp, {data}) => <EditPlantModal {...this.props} mutate={updateGardenApp} data={data}/>
+          }
+        </Mutation>
+    )
+  }
+}
 
-export default EditPlantModal
+export default EditPlantModalWithMutate
+
