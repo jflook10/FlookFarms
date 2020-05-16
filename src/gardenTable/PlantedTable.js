@@ -21,7 +21,7 @@ const PLANTED_QUERY = gql`
       seededDate
       seedVendor
       plantingLocation
-      germenationNotes
+      germinationNotes
       harvestNotes
     }
   }
@@ -75,7 +75,7 @@ export class PlantedTable extends React.Component {
                 <TableCell>{this.formatDate(row.plantedDate)}</TableCell>
                 <TableCell>{row.plantingLocation}</TableCell>
                 <TableCell>{row.seedVendor}</TableCell>
-                <TableCell>{row.germenationNotes}</TableCell>
+                <TableCell>{row.germinationNotes}</TableCell>
                 <TableCell>{row.harvestNotes}</TableCell>
               </TableRow>
             ))}

@@ -75,7 +75,7 @@ const EditPlantModal =({plant, mutate}) => {
   const [seededDate, setSeededDate] = React.useState(plant.seededDate);
   const [plantedDate, setPlantedDate] = React.useState(plant.plantedDate);
   const [harvestNotes, setHarvestNotes] = React.useState(plant.harvestNotes);
-  const [germenationNotes, setGermenationNotes] = React.useState(plant.germenationNotes);
+  const [germinationNotes, setGermenationNotes] = React.useState(plant.germinationNotes);
   const [variety, setVariety] = React.useState(plant.variety);
   const [vendor, setVendor] = React.useState(plant.seedVendor);
 
@@ -109,7 +109,7 @@ const EditPlantModal =({plant, mutate}) => {
       harvestNotes,
       variety,
       seedVendor: vendor,
-      germenationNotes: germenationNotes,
+      germinationNotes: germinationNotes,
       seededDate: getISODate(seededDate)
     }
 
@@ -203,7 +203,7 @@ const EditPlantModal =({plant, mutate}) => {
                   variant="outlined"
                   color="secondary"
                   multiline={true}
-                  defaultValue={germenationNotes}
+                  defaultValue={germinationNotes}
                   onChange={e => setGermenationNotes(e.target.value)}
               />
               <TextField
