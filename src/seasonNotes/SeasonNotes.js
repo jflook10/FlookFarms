@@ -9,6 +9,8 @@ import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 
 import Title from "../Dashboard/Title";
+import SeasonModalWithMutate from "./SeasonModal";
+import {seasons} from "../constants/constants";
 
 const NOTES_QUERY = gql`
   query getNotes {
@@ -22,23 +24,51 @@ const NOTES_QUERY = gql`
 `;
 
 const styles = (theme) => ({
-    seeMore: {
-        marginTop: theme.spacing(3),
+    tr: {
+        display: 'block',
+        margin: theme.spacing(.5, 0),
+        borderRadius: theme.spacing(.5, .5, 0, 0),
+        '&:hover': {
+            backgroundColor: theme.palette.grey[300],
+        }
     },
+    td: {
+        padding: theme.spacing(0, 1),
+    }
 });
 
-export class PlantedTable extends React.Component {
+export class SeasonNotes extends React.Component {
+    emptyNote= {
+        year: new Date().getFullYear(),
+        season: seasons[0], //Spring
+        notes: ""
+    }
+    state={
+        isModalOpen: false,
+        noteOpen: this.emptyNote,
+    }
+
+    handleModal= row => {
+        this.setState({
+            noteOpen: row ? row : this.emptyNote,
+            isModalOpen: !this.state.isModalOpen,
+        })
+
+    }
+
     render() {
-        const { data } = this.props;
+        const { data, classes } = this.props
+        const { isModalOpen, noteOpen} = this.state
 
         return (
             <div>
                 <Title>Season Notes</Title>
+                <SeasonModalWithMutate isModalOpen={isModalOpen} handleModal={this.handleModal} note={noteOpen}/>
                 <Table size="small">
                     <TableBody>
                         {data.map((row) => (
-                            <TableRow key={row.id}>
-                                <TableCell>
+                            <TableRow key={row.id} className={classes.tr} onClick={() => this.handleModal(row)}>
+                                <TableCell className={classes.td}>
                                     <div>
                                         <p>{row.year} - {row.season}</p>
                                         <p>{row.notes}</p>
@@ -62,7 +92,7 @@ export class NotesQuery extends React.Component {
                 {({ loading, data }) => {
                     if (loading) return "Loading...";
                     const { seasonNoteses } = data;
-                    return <PlantedTable data={seasonNoteses} classes={classes} />;
+                    return <SeasonNotes data={seasonNoteses} classes={classes} />;
                 }}
             </Query>
         );

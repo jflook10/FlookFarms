@@ -22,3 +22,9 @@ export const vendors = [
     "Other",
 ]
 
+export const seasons = [
+    "Spring",
+    "Summer",
+    "Fall",
+    "Winter"
+]
