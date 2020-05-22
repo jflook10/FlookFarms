@@ -1,6 +1,4 @@
 import React, {useState, useEffect} from 'react';
-import gql from "graphql-tag";
-import { Mutation } from "react-apollo"
 
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
@@ -14,20 +12,8 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
-
-const UPDATE_SEASON_MUTATION = gql`
-mutation EditSeason($id:ID!, $input: SeasonNotesUpdateInput!){
-  updateSeasonNotes(
-    where: {
-      id: $id
-    }
-    data: $input
-    )
-   {
-    id
-  }
-}
-`
+import IconButton from "@material-ui/core/IconButton";
+import DeleteIcon from '@material-ui/icons/Delete';
 
 //TODO move out dupl styles
 const useStyles = makeStyles(theme => ({
@@ -66,7 +52,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-const SeasonModal =({note, mutate, isModalOpen, handleModal}) => {
+const SeasonModal =({note, mutate, isModalOpen, handleModal, handleDeleteMutation}) => {
 
     const classes = useStyles();
     //TODO need modal error on no year, required field
@@ -81,18 +67,25 @@ const SeasonModal =({note, mutate, isModalOpen, handleModal}) => {
         setNote(note.notes)
     } ,[note])
 
-    const handleSubmit = (e) => {
+    const handleSubmit = e => {
         e.preventDefault()
 
         const input = {
-          year: yearHook,
+          year: parseInt(yearHook),
           season: seasonHook,
           notes: noteHook,
         }
 
-        mutate({ variables: {id: note.id, input: input}})
+        mutate({ variables: {input: input, id: note.id}})
         handleModal() //TODO error handling for if/when to close
     }
+
+    const onClickDelete = () => {
+        handleDeleteMutation({ variables: {id: note.id}})
+        handleModal()
+    }
+
+    const header = handleDeleteMutation ? "Update season notes" : "Create a season note"
 
     return (
             <Modal
@@ -108,7 +101,7 @@ const SeasonModal =({note, mutate, isModalOpen, handleModal}) => {
             >
                 <Fade in={isModalOpen}>
                     <div className={classes.paper}>
-                        <h2 data-testid="seasonModal-title">Update season notes</h2>
+                        <h2 data-testid="seasonModal-title">{header}</h2>
                         <form onSubmit={e => handleSubmit(e)} className={classes.form} noValidate autoComplete="off">
                             <TextField
                                 className={classes.formField}
@@ -145,6 +138,12 @@ const SeasonModal =({note, mutate, isModalOpen, handleModal}) => {
                                 onChange={e => setNote(e.target.value)}
                             />
                             <div className={classes.buttonGroup}>
+                                {
+                                    handleDeleteMutation ? <IconButton onClick={() => onClickDelete()}>
+                                        <DeleteIcon />
+                                    </IconButton> : null
+                                }
+
                                 <Button type="submit" variant="contained" color="primary" className={classes.saveButton}>Save</Button>
                                 <Button onClick={() => handleModal()}>Cancel</Button>
                             </div>
@@ -155,17 +154,5 @@ const SeasonModal =({note, mutate, isModalOpen, handleModal}) => {
     );
 }
 
-export class SeasonModalWithMutate extends React.Component {
-    render() {
-        return(
-            <Mutation mutation={UPDATE_SEASON_MUTATION}>
-                {
-                    (updateGardenApp, {data}) => <SeasonModal {...this.props} mutate={updateGardenApp} data={data}/>
-                }
-            </Mutation>
-        )
-    }
-}
-
-export default SeasonModalWithMutate
+export default SeasonModal
 
