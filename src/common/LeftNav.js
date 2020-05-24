@@ -12,7 +12,8 @@ import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import DashboardIcon from "@material-ui/icons/Dashboard";
-import TableChartIcon from "@material-ui/icons/TableChart";
+import LocalFloristIcon from '@material-ui/icons/LocalFlorist';
+import WbSunnyIcon from '@material-ui/icons/WbSunny';
 
 const drawerWidth = 240;
 
@@ -69,7 +70,7 @@ export default function LeftNav() {
       open={open}
     >
       <div className={classes.toolbarIcon}>
-        <IconButton onClick={handleDrawer}>
+        <IconButton onClick={handleDrawer} disableRipple={true}>
           <ChevronLeftIcon />
         </IconButton>
       </div>
@@ -86,7 +87,7 @@ export default function LeftNav() {
         <Link to={"/gardenTable"}>
           <ListItem button>
             <ListItemIcon>
-              <TableChartIcon />
+              <LocalFloristIcon />
             </ListItemIcon>
             <ListItemText primary="Growing History" />
           </ListItem>
@@ -94,7 +95,7 @@ export default function LeftNav() {
         <Link to={"/seasonNotes"}>
           <ListItem button>
             <ListItemIcon>
-              <TableChartIcon />
+              <WbSunnyIcon />
             </ListItemIcon>
             <ListItemText primary="Season Notes" />
           </ListItem>

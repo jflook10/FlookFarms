@@ -92,6 +92,7 @@ export class SeasonNotes extends React.Component {
             color="secondary"
             aria-label="add a note"
             onClick={() => this.handleCreateModal()}
+            disableRipple={true}
           >
             <AddCircleOutlineIcon />
           </IconButton>

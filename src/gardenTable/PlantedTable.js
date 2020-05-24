@@ -11,6 +11,9 @@ import TableRow from "@material-ui/core/TableRow";
 
 import Title from "../Dashboard/Title";
 import EditPlantModal from "./EditPlantModal";
+import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
+import IconButton from "@material-ui/core/IconButton";
+import NewPlantModal from "./NewPlantModal";
 
 const PLANTED_QUERY = gql`
   query getPlanted {
@@ -31,9 +34,20 @@ const styles = (theme) => ({
   seeMore: {
     marginTop: theme.spacing(3),
   },
+  titleBar: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+
 });
 
 export class PlantedTable extends React.Component {
+
+  state = {
+    isCreateModalOpen: false,
+  }
+
   renderEditButton = (row) => {
     return <EditPlantModal plant={row} />;
   };
@@ -47,12 +61,32 @@ export class PlantedTable extends React.Component {
     return month + "/" + day + "/" + year;
   };
 
+  handleCreateModal = () => {
+    this.setState({
+      isCreateModalOpen: !this.state.isCreateModalOpen,
+    });
+  };
+
   render() {
-    const { data } = this.props;
+    const { data, classes } = this.props;
+    const { isCreateModalOpen } = this.state;
 
     return (
       <React.Fragment>
+        <div className={classes.titleBar}>
         <Title>Growing History</Title>
+         <IconButton
+             color="secondary"
+             aria-label="add a plant"
+             onClick={() => this.handleCreateModal()}
+             disableRipple={true}
+         >
+           <AddCircleOutlineIcon />
+         </IconButton>
+         <NewPlantModal
+             isModalOpen={isCreateModalOpen}
+             handleModal={() => this.setState({isCreateModalOpen: !this.state.isCreateModalOpen})}/>
+       </div>
         <Table size="small">
           <TableHead>
             <TableRow>

@@ -139,13 +139,13 @@ const SeasonModal =({note, mutate, isModalOpen, handleModal, handleDeleteMutatio
                             />
                             <div className={classes.buttonGroup}>
                                 {
-                                    handleDeleteMutation ? <IconButton onClick={() => onClickDelete()}>
+                                    handleDeleteMutation ? <IconButton onClick={() => onClickDelete()} disableRipple={true}>
                                         <DeleteIcon />
                                     </IconButton> : null
                                 }
 
-                                <Button type="submit" variant="contained" color="primary" className={classes.saveButton}>Save</Button>
-                                <Button onClick={() => handleModal()}>Cancel</Button>
+                                <Button type="submit" variant="contained" color="primary" className={classes.saveButton} disableRipple={true}>Save</Button>
+                                <Button onClick={() => handleModal()} disableRipple={true}>Cancel</Button>
                             </div>
                         </form>
                     </div>

@@ -119,7 +119,7 @@ const EditPlantModal =({plant, mutate}) => {
 
   return (
     <div>
-      <IconButton onClick={handleOpen}>
+      <IconButton onClick={handleOpen} disableRipple={true}>
         <CreateIcon />
       </IconButton>
       <Modal
@@ -217,8 +217,8 @@ const EditPlantModal =({plant, mutate}) => {
                   onChange={e => setHarvestNotes(e.target.value)}
               />
               <div className={classes.buttonGroup}>
-                <Button disabled={modalError} type="submit" variant="contained" color="primary" className={classes.saveButton}>Save</Button>
-                <Button onClick={handleClose}>Cancel</Button>
+                <Button disabled={modalError} type="submit" variant="contained" color="primary" className={classes.saveButton} disableRipple={true}>Save</Button>
+                <Button onClick={handleClose} disableRipple={true}>Cancel</Button>
               </div>
             </form>
           </div>
